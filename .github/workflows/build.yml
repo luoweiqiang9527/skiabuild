@@ -17,90 +17,90 @@ env:
   version: m116-f44dbc40d8
 
 jobs:
-  # macos:
-  #   runs-on: macos-11
-  #   strategy:
-  #     matrix:
-  #       machine: ["x64", "arm64"]
-  #       build_type: [Release, Debug]
-  #     fail-fast: false
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - run: python3 script/check_release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
-  #       if: ${{ github.event.inputs.skip_release != 'true' }}
-  #       env:
-  #         API_TOKEN: ${{ secrets.API_TOKEN }}
-  #     - uses: abdes/gha-setup-ninja@660f330a40aefa8d11632b3f901e92a4adb33d65
-  #     - run: python3 script/checkout.py --version ${{ env.version }}
-  #     - run: python3 script/build.py --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
-  #     - run: python3 script/archive.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: Skia-${{ env.version }}-macos-${{ matrix.build_type }}-${{ matrix.machine }}.zip
-  #         path: '*.zip'
-  #     - run: python3 script/release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
-  #       if: ${{ github.event.inputs.skip_release != 'true' }}
-  #       env:
-  #         API_TOKEN: ${{ secrets.API_TOKEN }}
+  macos:
+    runs-on: macos-11
+    strategy:
+      matrix:
+        machine: ["x64", "arm64"]
+        build_type: [Release, Debug]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - run: python3 script/check_release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+      - uses: abdes/gha-setup-ninja@660f330a40aefa8d11632b3f901e92a4adb33d65
+      - run: python3 script/checkout.py --version ${{ env.version }}
+      - run: python3 script/build.py --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
+      - run: python3 script/archive.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Skia-${{ env.version }}-macos-${{ matrix.build_type }}-${{ matrix.machine }}.zip
+          path: '*.zip'
+      - run: python3 script/release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.machine }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
 
-  # linux:
-  #   runs-on: ubuntu-20.04
-  #   strategy:
-  #     matrix:
-  #       target_machine: ["x64", "arm64"]
-  #       build_type: [Release, Debug]
-  #     fail-fast: false
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - run: python3 script/check_release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
-  #       if: ${{ github.event.inputs.skip_release != 'true' }}
-  #       env:
-  #         API_TOKEN: ${{ secrets.API_TOKEN }}
-  #     - uses: abdes/gha-setup-ninja@660f330a40aefa8d11632b3f901e92a4adb33d65
-  #     - run: sudo ./script/prepare_linux.sh
-  #     - run: |
-  #         sudo apt-get update
-  #         sudo apt-get --yes install g\+\+-9-aarch64-linux-gnu
-  #       if: ${{ matrix.target_machine == 'arm64' }}
-  #     - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/checkout.py --version ${{ env.version }}
-  #     - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/build.py --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
-  #     - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/archive.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: Skia-${{ env.version }}-linux-${{ matrix.build_type }}-${{ matrix.target_machine }}.zip
-  #         path: '*.zip'
-  #     - run: python3 script/release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
-  #       if: ${{ github.event.inputs.skip_release != 'true' }}
-  #       env:
-  #         API_TOKEN: ${{ secrets.API_TOKEN }}
+  linux:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        target_machine: ["x64", "arm64"]
+        build_type: [Release, Debug]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - run: python3 script/check_release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+      - uses: abdes/gha-setup-ninja@660f330a40aefa8d11632b3f901e92a4adb33d65
+      - run: sudo ./script/prepare_linux.sh
+      - run: |
+          sudo apt-get update
+          sudo apt-get --yes install g\+\+-9-aarch64-linux-gnu
+        if: ${{ matrix.target_machine == 'arm64' }}
+      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/checkout.py --version ${{ env.version }}
+      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/build.py --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
+      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/archive.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Skia-${{ env.version }}-linux-${{ matrix.build_type }}-${{ matrix.target_machine }}.zip
+          path: '*.zip'
+      - run: python3 script/release.py --version ${{ env.version }} --build-type ${{ matrix.build_type }} --machine ${{ matrix.target_machine }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
 
-  # android:
-  #   if: false
-  #   runs-on: ubuntu-20.04
-  #   strategy:
-  #     matrix:
-  #       machine: [arm, arm64, x64, x86]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - run: python3 script/check_release.py --version ${{ env.version }} --system android --machine ${{ matrix.machine }}
-  #       if: ${{ github.event.inputs.skip_release != 'true' }}
-  #       env:
-  #         API_TOKEN: ${{ secrets.API_TOKEN }}
-  #     - uses: actions/setup-java@v1
-  #       with:
-  #         java-version: 1.8
-  #     - run: sudo ./script/prepare_linux.sh
-  #     - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/checkout.py --version ${{ env.version }} --system android --machine ${{ matrix.machine }}
-  #     - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/build.py --system android --machine ${{ matrix.machine }} --ndk "/usr/local/lib/android/sdk/ndk-bundle"
-  #     - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/archive.py --system android --machine ${{ matrix.machine }}
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: Skia-${{ env.version }}-android-Release-${{ matrix.machine }}.zip
-  #         path: '*.zip'
-  #     - run: python3 script/release.py --system android --machine ${{ matrix.machine }}
-  #       if: ${{ github.event.inputs.skip_release != 'true' }}
-  #       env:
-  #         API_TOKEN: ${{ secrets.API_TOKEN }}
+  android:
+    if: false
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        machine: [arm, arm64, x64, x86]
+    steps:
+      - uses: actions/checkout@v3
+      - run: python3 script/check_release.py --version ${{ env.version }} --system android --machine ${{ matrix.machine }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - run: sudo ./script/prepare_linux.sh
+      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/checkout.py --version ${{ env.version }} --system android --machine ${{ matrix.machine }}
+      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/build.py --system android --machine ${{ matrix.machine }} --ndk "/usr/local/lib/android/sdk/ndk-bundle"
+      - run: PATH=/usr/lib/binutils-2.26/bin:$PATH python3 script/archive.py --system android --machine ${{ matrix.machine }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Skia-${{ env.version }}-android-Release-${{ matrix.machine }}.zip
+          path: '*.zip'
+      - run: python3 script/release.py --system android --machine ${{ matrix.machine }}
+        if: ${{ github.event.inputs.skip_release != 'true' }}
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
 
   windows:
     runs-on: windows-latest
