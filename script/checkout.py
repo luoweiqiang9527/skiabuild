@@ -8,11 +8,11 @@ def main():
   parser = common.create_parser(True)
   args = parser.parse_args()
 
-  # Clone depot_tools
+  # Clone depot_tools 克隆depot_tools用于处理 Chromium 开发的工具。
   if not os.path.exists("depot_tools"):
     subprocess.check_call(["git", "clone", "https://chromium.googlesource.com/chromium/tools/depot_tools.git", "depot_tools"])
 
-  # Clone Skia
+  # Clone Skia 克隆SKia
   match = re.match('(m\\d+)(?:-([0-9a-f]+)(?:-([1-9][0-9]*))?)?', args.version)
   if not match:
     raise Exception('Expected --version "m<ver>-<sha>", got "' + args.version + '"')
